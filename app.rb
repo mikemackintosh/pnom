@@ -85,7 +85,6 @@ module Kn0x
             alias_method :checksum, :sum
 
             def proto
-                puts "OMFG!?!"
                 protocol( @proto.to_i )
             end
             alias_method :protocol, :proto
@@ -144,143 +143,42 @@ module Kn0x
             def initialize( bytes )
                 @packet = bytes
                 
-                self.src_port = bytes[34..35].join().to_i(16).to_s(10)
-                self.dst_port = bytes[36..37].join().to_i(16).to_s(10) 
+                @src_port = bytes[34..35].join().to_i(16).to_s(10).to_i
+                @dst_port = bytes[36..37].join().to_i(16).to_s(10).to_i
                 
-                self.seq = bytes[38..41].join().to_i(16).to_s(10)
+                @seq = bytes[38..41].join().to_i(16).to_s(10).to_i
 
-                self.ack = bytes[42..45].join().to_i(16).to_s(10)
+                @ack = bytes[42..45].join().to_i(16).to_s(10).to_i
 
-                self.offset = bytes[46].split(//)[0].to_i(16).to_s(10)
+                @offset = bytes[46].split(//)[0].to_i(16).to_s(10)
 
-                self.reserved = bytes[46].split(//)[1].to_i(16).to_s(10)
-                self.ecn = bytes[47].split(//)[0].to_i(16).to_s(10)
-                self.cbits = bytes[47].split(//)[1].to_i(16).to_s(10)
+                @reserved = bytes[46].split(//)[1].to_i(16).to_s(10)
+                @ecn = bytes[47].split(//)[0].to_i(16).to_s(10)
+                @cbits = bytes[47].split(//)[1].to_i(16).to_s(10)
 
-                self.win = bytes[48..49].join().to_i(16)
-                self.sum = bytes[50..51].join().to_i(16)
-                self.uptr = bytes[52..53].join().to_i(16)
+                @win = bytes[48..49].join().to_i(16)
+                @sum = bytes[50..51].join().to_i(16)
+                @uptr = bytes[52..53].join().to_i(16)
             end
 
-
-            # src_port
-            def self.src_port=(val)
-                self[:src_port] = val.to_i
-            end
-
-            def self.src_port
-                self[:src_port]
-            end
             alias_method  :source_port, :src_port
             alias_method  :sport, :src_port
 
-
-            # dst_port
-            def self.dst_port=(val)
-                self[:dst_port] = val.to_i
-            end
-
-            def self.dst_port
-                self[:dst_port]
-            end
             alias_method  :dest_port, :dst_port
             alias_method  :dport, :dst_port
 
-
-            # seq
-            def self.seq=(val)
-                self[:seq] = val.to_i
-            end
-
-            def self.seq
-                self[:seq]
-            end
-
-
-            # ack
-            def self.ack=(val)
-                self[:ack] = val.to_i
-            end
-
-            def self.ack
-                self[:ack]
-            end
-
-
-            # offset
-            def self.offset=(val)
-                self[:offset] = val.to_i
-            end
-
-            def self.offset
-                self[:offset]
-            end
-
-            # reserved
-            def self.reserved=(val)
-                self[:reserved] = val.to_i
-            end
-
-            def self.reserved
-                self[:reserved]
-            end
-
-
-            # ecn
-            def self.ecn=(val)
-                self[:ecn] = val.to_i
-            end
-
-            def self.ecn
-                self[:ecn]
-            end
-
-
-            # cbits
-            def self.cbits=(val)
-                self[:cbits] = val.to_i
-            end
-
-            def self.cbits
-                self[:cbits]
-            end
-            alias_method :controlbits, :cbits
-            alias_method :control, :cbits
-
-
-            # win
-            def self.win=(val)
-                self[:win] = val.to_i
-            end
-
-            def self.win
-                self[:win]
-            end
             alias_method :window, :win
             alias_method :windowsize, :win
             alias_method :size, :win
 
-
-            # sum
-            def self.sum=(val)
-                self[:sum] = val.to_i
-            end
-
-            def self.sum
-                self[:sum]
-            end
             alias_method :checksum, :sum
-
-
-            # uptr
-            def self.uptr=(val)
-                self[:uptr] = val.to_i
-            end
-
-            def self.uptr
-                self[:uptr]
-            end
             alias_method :urgent, :uptr
+
+            def cbits
+                @cbits
+            end
+            alias_method :controlbits, :cbits
+            alias_method :control, :cbits
 
         end
 
@@ -304,13 +202,13 @@ pcap.loop(count: 5){|t,p|
     bytes = p.body.bytes.map{|sym| sym.to_s(16).rjust(2, '0') }
 
     eth = Kn0x::Packet::Eth.new bytes
-    puts eth.ethertype
 
     ip = Kn0x::Packet::Ip.new bytes
-    puts ip.proto
+    puts "From IP: #{ip.src} to IP: #{ip.dest}\n"
+
     if ip.proto.eql? 'tcp'
         tcp = Kn0x::Packet::Tcp.new bytes
-        puts tcp.inspect
+        puts "From port: #{tcp.sport} to port: #{tcp.dport}\n"
     end
 
     puts bytes.inspect
