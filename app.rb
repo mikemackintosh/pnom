@@ -113,7 +113,6 @@ module Kn0x
                 protocols[ proto ]
             end
 
-
         end
 
     end
@@ -186,16 +185,81 @@ module Kn0x
 
 end
 
+module Kn0x
+    
+    class Packet
+        
+        class Udp
+            
+            # Attributes
+            attr_accessor :src_port
+            attr_accessor :dst_port
+            attr_accessor :seq
+            attr_accessor :ack
+            attr_accessor :offset
+            attr_accessor :reserved
+            attr_accessor :ecn
+            attr_accessor :cbits
+            attr_accessor :win
+            attr_accessor :sum
+            attr_accessor :uptr
+
+            # Initialize the packet
+            def initialize( bytes )
+                @packet = bytes
+                
+                @src_port = bytes[34..35].join().to_i(16).to_s(10).to_i
+                @dst_port = bytes[36..37].join().to_i(16).to_s(10).to_i
+                
+                @seq = bytes[38..41].join().to_i(16).to_s(10).to_i
+
+                @ack = bytes[42..45].join().to_i(16).to_s(10).to_i
+
+                @offset = bytes[46].split(//)[0].to_i(16).to_s(10)
+
+                @reserved = bytes[46].split(//)[1].to_i(16).to_s(10)
+                @ecn = bytes[47].split(//)[0].to_i(16).to_s(10)
+                @cbits = bytes[47].split(//)[1].to_i(16).to_s(10)
+
+                @win = bytes[48..49].join().to_i(16)
+                @sum = bytes[50..51].join().to_i(16)
+                @uptr = bytes[52..53].join().to_i(16)
+            end
+
+            alias_method  :source_port, :src_port
+            alias_method  :sport, :src_port
+
+            alias_method  :dest_port, :dst_port
+            alias_method  :dport, :dst_port
+
+            alias_method :window, :win
+            alias_method :windowsize, :win
+            alias_method :size, :win
+
+            alias_method :checksum, :sum
+            alias_method :urgent, :uptr
+
+            def cbits
+                @cbits
+            end
+            alias_method :controlbits, :cbits
+            alias_method :control, :cbits
+
+        end
+
+    end
+
+end
+
 pcap =
   FFI::PCap::Live.new(:dev => 'en0',
                       :timeout => 1,
                       :promisc => true,
                       :handler => FFI::PCap::Handler)
 
-pcap.setfilter("tcp")
+pcap.setfilter("")
 
-# 167838971 => 10.1.4.251
-pcap.loop(count: 5){|t,p|
+pcap.loop(count: 7){|t,p|
     
     mac = {}
 
@@ -204,14 +268,18 @@ pcap.loop(count: 5){|t,p|
     eth = Kn0x::Packet::Eth.new bytes
 
     ip = Kn0x::Packet::Ip.new bytes
-    puts "From IP: #{ip.src} to IP: #{ip.dest}\n"
+    puts "#{p.time} - #{eth.src} -> #{eth.dst}\n"
 
-    if ip.proto.eql? 'tcp'
+    case ip.proto
+    when 'tcp'
         tcp = Kn0x::Packet::Tcp.new bytes
-        puts "From port: #{tcp.sport} to port: #{tcp.dport}\n"
+        puts "#{ip.proto}  #{ip.src}:#{tcp.sport} to #{ip.dest}:#{tcp.dport}\n"
+    when 'udp'
+        udp = Kn0x::Packet::Udp.new bytes
+        puts "#{ip.proto} #{ip.src}:#{udp.sport} to #{ip.dest}:#{udp.dport}\n"
+    else
+        puts "#{ip.proto} #{ip.src} to #{ip.dest}\n"
     end
-
-    puts bytes.inspect
 
     puts Hexdump.dump(p.body); puts "\n"
 }
