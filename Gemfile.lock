@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/mikemackintosh/ffi-packets
-  revision: 6b77f2bfdbb37a5a120ee950cab99328507ce3a4
+  revision: 0620ce03d42218cbeb18a7f07dc4e6b1624907ea
   specs:
     ffi-packets (0.1.2)
       ffi
@@ -10,10 +10,10 @@ GIT
 
 GIT
   remote: https://github.com/mikemackintosh/ipaddress
-  revision: b28777c741205bc3a20efea7db20884cc9af98e4
+  revision: 0b5c3984581b7d9191bf04fc03eab6bc3a6248af
   branch: adding-#to_h
   specs:
-    ipaddress (0.8.0)
+    ipaddress (0.8.1)
 
 GEM
   remote: https://rubygems.org/
@@ -61,6 +61,6 @@ DEPENDENCIES
   ffi-packets (= 0.1.2)!
   ffi-pcap
   hexdump
-  ipaddress!
+  ipaddress (= 0.8.1)!
   pry
   sinatra
