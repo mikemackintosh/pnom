@@ -1,0 +1,3 @@
+runtime: ruby21
+run: exec ruby app.rb
+capture: exec ruby app.rb
