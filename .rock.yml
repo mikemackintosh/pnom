@@ -1,3 +1,7 @@
 runtime: ruby21
+build: |
+    rm -rf vendor/
+    rm -rf Gemfile.lock
+    {{parent}}
 run: exec ruby app.rb
 capture: exec ruby app.rb
