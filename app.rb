@@ -16,8 +16,7 @@ pcap.setfilter("tcp")
 pcap.loop(count: 20){|t,p| 
     ip = FFI::Packets::Ip::Hdr.new raw: p.body
     tcp = FFI::Packets::TCP::Hdr.new raw: p.body
-    puts "#{ip.src} --> #{ip.dst}"
-    puts tcp.inspect
+    puts "#{p.time}: #{ip.src} --> #{ip.dst}"
     Hexdump.dump(p.body); puts "\n"
 }
 
