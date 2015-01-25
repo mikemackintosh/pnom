@@ -1,18 +1,29 @@
+GIT
+  remote: https://github.com/Traz/ffi-packets
+  revision: 30bcd3719a0aa0f0c2c44499b50089551056db84
+  specs:
+    ffi-packets (0.1.1)
+      ffi
+      ffi_dry
+
+GIT
+  remote: https://github.com/mikemackintosh/ipaddress
+  revision: b28777c741205bc3a20efea7db20884cc9af98e4
+  branch: adding-#to_h
+  specs:
+    ipaddress (0.8.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
     coderay (1.1.0)
     ffi (1.9.6)
-    ffi-packets (0.1.0)
-      ffi
-      ffi_dry
     ffi-pcap (0.2.1)
       ffi (~> 1.0)
       ffi_dry (~> 0.1.12)
     ffi_dry (0.1.12)
       ffi (>= 0.5.0)
     hexdump (0.2.3)
-    ipaddress (0.8.0)
     method_source (0.8.2)
     pry (0.10.1)
       coderay (~> 1.1.0)
@@ -32,9 +43,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  ffi-packets
+  ffi-packets!
   ffi-pcap
   hexdump
-  ipaddress
+  ipaddress!
   pry
   sinatra
